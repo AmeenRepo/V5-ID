@@ -1,19 +1,15 @@
-FROM node:lts-buster
+entrypoint = "index.js"
+modules = ["nodejs-20:v8-20230920-bd784b9"]
+hidden = [".config", "package-lock.json"]
 
-RUN apt-get update && \
-  apt-get install -y \
-  ffmpeg \
-  imagemagick \
-  webp && \
-  apt-get upgrade -y && \
-  rm -rf /var/lib/apt/lists/*
+[nix]
+channel = "stable-23_05"
 
-COPY package.json .
+[unitTest]
+language = "nodejs"
 
-RUN npm install && npm install qrcode-terminal
+[deployment]
+run = ["node", "index.js"]
+deploymentTarget = "cloudrun"
+ignorePorts = false
 
-COPY . .
-
-EXPOSE 3000
-
-CMD ["node", "index.js", "--server"]
